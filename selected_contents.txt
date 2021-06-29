@@ -1,0 +1,10 @@
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/40470847413_monet_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/7628292440_monet_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/9093238255_monet_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/19843889312_ink_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/15352086327_ink_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/6237691293_water_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/6284054406_monet_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/32429820316_vangogh_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/42471907565_monet_.png
+/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/2304193476_monet_.png
