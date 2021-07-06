@@ -23,7 +23,7 @@ parser.add_argument("-style_weight", type=float, default=1e2)
 parser.add_argument("-normalize_weights", action='store_true')
 parser.add_argument("-normalize_gradients", action='store_true')
 parser.add_argument("-tv_weight", type=float, default=1e-3)
-parser.add_argument("-num_iterations", type=int, default=1000)
+parser.add_argument("-num_iterations", type=int, default=500)
 parser.add_argument("-init", choices=['random', 'image'], default='random')
 parser.add_argument("-init_image", default=None)
 parser.add_argument("-optimizer", choices=['lbfgs', 'adam'], default='lbfgs')
@@ -32,7 +32,7 @@ parser.add_argument("-lbfgs_num_correction", type=int, default=100)
 
 # Output options
 parser.add_argument("-print_iter", type=int, default=50)
-parser.add_argument("-save_iter", type=int, default=100)
+parser.add_argument("-save_iter", type=int, default=500)
 parser.add_argument("-output_image", default='out.png')
 
 # Other options
@@ -54,16 +54,14 @@ params = parser.parse_args()
 
 Image.MAX_IMAGE_PIXELS = 1000000000 # Support gigapixel images
 
-def create_model(checkpoint_path, pooling='max', disable_check=False):
-    cnn, layerList = loadCaffemodel(checkpoint_path, pooling, params.gpu, disable_check)
-    return cnn, layerList, params.gpu
 
-def process_image(cnn, layerList, content_image_path, style_image_path, gpu='0'):
-    dtype = torch.cuda.FloatTensor
-    multidevice = False
-    backward_device = 'cuda:'+gpu
-    content_image = preprocess(content_image_path, params.image_size).type(dtype)
-    style_image_input = style_image_path.split(',')
+def main():
+    dtype, multidevice, backward_device = setup_gpu()
+
+    cnn, layerList = loadCaffemodel(params.model_file, params.pooling, params.gpu, params.disable_check)
+
+    content_image = preprocess(params.content_image, params.image_size).type(dtype)
+    style_image_input = params.style_image.split(',')
     style_image_list, ext = [], [".jpg", ".jpeg", ".png", ".tiff"]
     for image in style_image_input:
         if os.path.isdir(image):
@@ -223,26 +221,15 @@ def process_image(cnn, layerList, content_image_path, style_image_path, gpu='0')
             output_filename, file_extension = os.path.splitext(params.output_image)
             if t == params.num_iterations:
                 filename = output_filename + str(file_extension)
-                disp = deprocess(img.clone())
+            else:
+                filename = str(output_filename) + "_" + str(t) + str(file_extension)
+            disp = deprocess(img.clone())
 
-                # Maybe perform postprocessing for color-independent style transfer
-                if params.original_colors == 1:
-                    disp = original_colors(deprocess(content_image.clone()), disp)
-                disp.save(str(filename))
+            # Maybe perform postprocessing for color-independent style transfer
+            if params.original_colors == 1:
+                disp = original_colors(deprocess(content_image.clone()), disp)
 
-            #------------------
-            # if t == params.num_iterations:
-            #     filename = output_filename + str(file_extension)
-            # else:
-            #     filename = str(output_filename) + "_" + str(t) + str(file_extension)
-            # disp = deprocess(img.clone())
-
-            # # Maybe perform postprocessing for color-independent style transfer
-            # if params.original_colors == 1:
-            #     disp = original_colors(deprocess(content_image.clone()), disp)
-            #------------------
-
-            # disp.save(str(filename))
+            disp.save(str(filename))
 
     # Function to evaluate loss and gradient. We run the net forward and
     # backward to get the gradient, and sum up losses from the loss modules.
@@ -502,8 +489,4 @@ class TVLoss(nn.Module):
 
 
 if __name__ == "__main__":
-    # print(params.model_file, params.pooling, params.gpu, params.disable_check)
-    cnn, layerList, gpu = create_model(params.model_file, params.pooling, params.disable_check)
-    content_image_path = '/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/40470847413_monet_.png'
-    style_image_path = '/mnt/data/huang/datasets/4in1_datasets_artworks/train_img/37093030911_vangogh_.png'
-    process_image(cnn, layerList, content_image_path, style_image_path, gpu=str(gpu))
+    main()

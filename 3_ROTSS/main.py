@@ -36,7 +36,7 @@ def process_image(vgg_encoder, pyramid, select_tensor, indices_generator, conten
 
     for j, con_image in enumerate(origin_image_pyramid[1:]):
         batch, channel, height, width = con_image.shape
-        print(f'Image size: ({height}, {width})')
+        # print(f'Image size: ({height}, {width})')
 
         org_con_image = F.interpolate(content_image, (height, width), mode='bilinear', align_corners=False).to(device)
         st_image = F.interpolate(style_image, (height, width), mode='bilinear', align_corners=False).to(device)
