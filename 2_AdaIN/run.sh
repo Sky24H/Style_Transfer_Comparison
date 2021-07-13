@@ -5,6 +5,4 @@ python process.py 3 &
 python process.py 4 &
 python process.py 5 &
 python process.py 6 &
-python process.py 7 &
-python process.py 8 &
-python process.py 9 &
+python process.py 7
